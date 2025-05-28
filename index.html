@@ -1,12 +1,87 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="hu">
 <head>
-  <meta charset="UTF-8">
-  <title>QR by David</title>
+    <meta charset="UTF-8">
+    <title>QR kód generátor képként</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #qr-container {
+            display: none;
+            margin: 30px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            width: fit-content;
+        }
+        #label {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        footer {
+            margin-top: 80px;
+            font-size: 14px;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
-  <h1>Welcome to QR Page</h1>
-  <img src="https://api.qrserver.com/v1/create-qr-code/?data=https://oneill944.github.io/qrbydavid&size=200x200" alt="QR code">
-  <p style="position: fixed; bottom: 5px; width: 100%; text-align: center;">designed by David • 2025</p>
+    <h1>QR kód generátor képpel</h1>
+    <input type="text" id="text" placeholder="QR tartalom" style="width: 300px; padding: 10px;"><br><br>
+    <input type="text" id="caption" placeholder="Aláírás szöveg" style="width: 300px; padding: 10px;"><br><br>
+    <button onclick="generateQR()">QR generálása</button>
+    <button onclick="downloadImage()">Letöltés képként</button>
+
+    <div id="qr-container">
+        <div id="qr"></div>
+        <div id="label"></div>
+    </div>
+
+    <footer>Designed by David..</footer>
+
+    <script>
+        function generateQR() {
+            const text = document.getElementById("text").value.trim();
+            const caption = document.getElementById("caption").value.trim();
+            const qrContainer = document.getElementById("qr-container");
+            const qrDiv = document.getElementById("qr");
+            const labelContainer = document.getElementById("label");
+
+            qrDiv.innerHTML = "";
+            labelContainer.textContent = "";
+            qrContainer.style.display = "none";
+
+            if (text) {
+                QRCode.toCanvas(document.createElement("canvas"), text, function (error, canvas) {
+                    if (error) console.error(error);
+                    else {
+                        qrDiv.appendChild(canvas);
+                        labelContainer.textContent = caption;
+                        qrContainer.style.display = "block";
+                    }
+                });
+            }
+        }
+
+        function downloadImage() {
+            const qrContainer = document.querySelector("#qr-container");
+            const caption = document.getElementById("caption").value.trim();
+            if (qrContainer.style.display !== "none") {
+                html2canvas(qrContainer).then(canvas => {
+                    const link = document.createElement("a");
+                    const fileName = caption ? caption.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".png" : "qr_kod.png";
+                    link.download = fileName;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                });
+            }
+        }
+    </script>
 </body>
 </html>
