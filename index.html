@@ -17,24 +17,34 @@
             padding: 20px;
             border: 1px solid #ccc;
             width: fit-content;
+            background-color: white;
         }
         #label {
             margin-top: 10px;
             font-size: 18px;
             font-weight: bold;
         }
-        #image-link-container {
-            margin-top: 20px;
-        }
-        #image-link-container img {
-            max-width: 100%;
-            margin-top: 10px;
-            border: 1px solid #ddd;
-        }
         footer {
             margin-top: 80px;
             font-size: 14px;
             color: #999;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #qr-container, #qr-container * {
+                visibility: visible;
+            }
+            #qr-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin: 0;
+                padding: 0;
+                border: none;
+            }
         }
     </style>
 </head>
@@ -44,13 +54,12 @@
     <input type="text" id="caption" placeholder="QR kód alatti szöveg" style="width: 300px; padding: 10px;"><br><br>
     <button onclick="generateQR()">Generálás</button>
     <button onclick="downloadImage()">Letöltés</button>
+    <button onclick="printQR()">Nyomtatás</button>
 
     <div id="qr-container">
         <div id="qr"></div>
         <div id="label"></div>
     </div>
-
-    <div id="image-link-container"></div>
 
     <footer>Designed by David..</footer>
 
@@ -67,7 +76,8 @@
             qrContainer.style.display = "none";
 
             if (text) {
-                QRCode.toCanvas(document.createElement("canvas"), text, function (error, canvas) {
+                const canvas = document.createElement("canvas");
+                QRCode.toCanvas(canvas, text, { width: 256, margin: 2 }, function (error) {
                     if (error) console.error(error);
                     else {
                         qrDiv.appendChild(canvas);
@@ -81,23 +91,23 @@
         function downloadImage() {
             const qrContainer = document.querySelector("#qr-container");
             const caption = document.getElementById("caption").value.trim();
-            const imageLinkContainer = document.getElementById("image-link-container");
-
             if (qrContainer.style.display !== "none") {
-                html2canvas(qrContainer).then(canvas => {
-                    const link = document.createElement("a");
-                    const fileName = caption ? caption.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".png" : "qr_kod.png";
-                    link.download = fileName;
-                    link.href = canvas.toDataURL();
-                    link.click();
+                setTimeout(() => {
+                    html2canvas(qrContainer, { scale: 2 }).then(canvas => {
+                        const link = document.createElement("a");
+                        const fileName = caption ? caption.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".png" : "qr_kod.png";
+                        link.download = fileName;
+                        link.href = canvas.toDataURL("image/png");
+                        link.click();
+                    });
+                }, 200);
+            }
+        }
 
-                    // Kép megjelenítése mobilon nyomtatáshoz / mentéshez
-                    imageLinkContainer.innerHTML = ""; // előző törlése
-                    const img = document.createElement("img");
-                    img.src = canvas.toDataURL();
-                    img.alt = "QR kép";
-                    imageLinkContainer.appendChild(img);
-                });
+        function printQR() {
+            const qrContainer = document.querySelector("#qr-container");
+            if (qrContainer.style.display !== "none") {
+                window.print();
             }
         }
     </script>
