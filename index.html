@@ -23,15 +23,18 @@
             font-size: 18px;
             font-weight: bold;
         }
+        #image-link-container {
+            margin-top: 20px;
+        }
+        #image-link-container img {
+            max-width: 100%;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+        }
         footer {
             margin-top: 80px;
             font-size: 14px;
             color: #999;
-        }
-        #preview-image {
-            margin-top: 30px;
-            max-width: 90%;
-            display: none;
         }
     </style>
 </head>
@@ -47,7 +50,7 @@
         <div id="label"></div>
     </div>
 
-    <img id="preview-image" alt="QR előnézet">
+    <div id="image-link-container"></div>
 
     <footer>Designed by David..</footer>
 
@@ -58,12 +61,10 @@
             const qrContainer = document.getElementById("qr-container");
             const qrDiv = document.getElementById("qr");
             const labelContainer = document.getElementById("label");
-            const previewImage = document.getElementById("preview-image");
 
             qrDiv.innerHTML = "";
             labelContainer.textContent = "";
             qrContainer.style.display = "none";
-            previewImage.style.display = "none";
 
             if (text) {
                 QRCode.toCanvas(document.createElement("canvas"), text, function (error, canvas) {
@@ -80,20 +81,22 @@
         function downloadImage() {
             const qrContainer = document.querySelector("#qr-container");
             const caption = document.getElementById("caption").value.trim();
-            const previewImage = document.getElementById("preview-image");
+            const imageLinkContainer = document.getElementById("image-link-container");
 
             if (qrContainer.style.display !== "none") {
                 html2canvas(qrContainer).then(canvas => {
-                    // Letöltés
                     const link = document.createElement("a");
                     const fileName = caption ? caption.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".png" : "qr_kod.png";
                     link.download = fileName;
                     link.href = canvas.toDataURL();
                     link.click();
 
-                    // Megjelenítés képként (előnézet telefonhoz)
-                    previewImage.src = canvas.toDataURL();
-                    previewImage.style.display = "block";
+                    // Kép megjelenítése mobilon nyomtatáshoz / mentéshez
+                    imageLinkContainer.innerHTML = ""; // előző törlése
+                    const img = document.createElement("img");
+                    img.src = canvas.toDataURL();
+                    img.alt = "QR kép";
+                    imageLinkContainer.appendChild(img);
                 });
             }
         }
