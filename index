@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>QR by David</title>
+</head>
+<body>
+  <h1>Welcome to QR Page</h1>
+  <img src="https://api.qrserver.com/v1/create-qr-code/?data=https://oneill944.github.io/qrbydavid&size=200x200" alt="QR code">
+  <p style="position: fixed; bottom: 5px; width: 100%; text-align: center;">designed by David • 2025</p>
+</body>
+</html>
