@@ -2,66 +2,110 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR kód generátor</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 50px;
-        }
-        #qr-container {
-            display: none;
-            margin: 30px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            width: fit-content;
-            background-color: white;
-        }
-        #label {
-            margin-top: 10px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        footer {
-            margin-top: 80px;
-            font-size: 14px;
-            color: #999;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
         }
 
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #qr-container, #qr-container * {
-                visibility: visible;
-            }
-            #qr-container {
-                position: absolute;
-                top: 0;
-                left: 0;
-                margin: 0;
-                padding: 0;
-                border: none;
-            }
+        .container {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 30px auto;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 48%;
+            padding: 12px;
+            margin: 5px 1%;
+            font-size: 16px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #004c99;
+        }
+
+        #qr-container {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            text-align: center;
+            background: #fff;
+        }
+
+        #label {
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 13px;
+            color: #888;
+            margin-top: 30px;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    <h1>QR kód generátor</h1>
-    <input type="text" id="text" placeholder="QR kód tartalma" style="width: 300px; padding: 10px;"><br><br>
-    <input type="text" id="caption" placeholder="QR kód alatti szöveg" style="width: 300px; padding: 10px;"><br><br>
-    <button onclick="generateQR()">Generálás</button>
-    <button onclick="downloadImage()">Letöltés</button>
-    <button onclick="printQR()">Nyomtatás</button>
+    <div class="container">
+        <h1>QR kód generátor</h1>
+        <input type="text" id="text" placeholder="QR kód tartalma">
+        <input type="text" id="caption" placeholder="QR kód alatti szöveg">
+        <div style="text-align: center;">
+            <button onclick="generateQR()">Generálás</button>
+            <button onclick="downloadImage()">Letöltés</button>
+        </div>
 
-    <div id="qr-container">
-        <div id="qr"></div>
-        <div id="label"></div>
+        <div id="qr-container">
+            <div id="qr"></div>
+            <div id="label"></div>
+        </div>
+
+        <footer>Designed by David..</footer>
     </div>
-
-    <footer>Designed by David..</footer>
 
     <script>
         function generateQR() {
@@ -101,13 +145,6 @@
                         link.click();
                     });
                 }, 200);
-            }
-        }
-
-        function printQR() {
-            const qrContainer = document.querySelector("#qr-container");
-            if (qrContainer.style.display !== "none") {
-                window.print();
             }
         }
     </script>
