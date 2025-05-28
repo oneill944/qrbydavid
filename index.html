@@ -76,6 +76,10 @@
             color: #333;
         }
 
+        #download-btn {
+            display: none;
+        }
+
         footer {
             text-align: center;
             font-size: 13px;
@@ -96,7 +100,7 @@
         <input type="text" id="caption" placeholder="QR kód alatti szöveg">
         <div style="text-align: center;">
             <button onclick="generateQR()">Generálás</button>
-            <button onclick="downloadImage()">Letöltés</button>
+            <button id="download-btn" onclick="downloadImage()">Letöltés</button>
         </div>
 
         <div id="qr-container">
@@ -114,10 +118,12 @@
             const qrContainer = document.getElementById("qr-container");
             const qrDiv = document.getElementById("qr");
             const labelContainer = document.getElementById("label");
+            const downloadBtn = document.getElementById("download-btn");
 
             qrDiv.innerHTML = "";
             labelContainer.textContent = "";
             qrContainer.style.display = "none";
+            downloadBtn.style.display = "none";
 
             if (text) {
                 const canvas = document.createElement("canvas");
@@ -127,6 +133,7 @@
                         qrDiv.appendChild(canvas);
                         labelContainer.textContent = caption;
                         qrContainer.style.display = "block";
+                        downloadBtn.style.display = "inline-block";
                     }
                 });
             }
