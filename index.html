@@ -71,7 +71,7 @@
 
         #label {
             margin-top: 10px;
-            font-size: 16px;
+            font-size: 32px;
             font-weight: bold;
             color: #333;
         }
@@ -127,7 +127,7 @@
 
             if (text) {
                 const canvas = document.createElement("canvas");
-                QRCode.toCanvas(canvas, text, { width: 256, margin: 2 }, function (error) {
+                QRCode.toCanvas(canvas, text, { width: 180, margin: 2 }, function (error) {
                     if (error) console.error(error);
                     else {
                         qrDiv.appendChild(canvas);
