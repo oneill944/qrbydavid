@@ -100,6 +100,25 @@
       max-width: 100%;
       height: auto;
     }
+
+    #result-image {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #result-image img {
+      max-width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+
+    #save-hint {
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -107,7 +126,7 @@
     <h1>QR kód generátor</h1>
     <input type="text" id="text" placeholder="QR kód tartalma">
     <input type="text" id="caption" placeholder="QR kód alatti szöveg">
-    <input type="text" id="extra" placeholder="Egyéb üzenet (pl.: Köszönjük a vásárlást ❤️)">
+    <input type="text" id="extra" placeholder="Egyéb üzenet (pl.: Köszi a vásárlást ❤️)">
     
     <div style="text-align: center;">
       <button onclick="generateQR()">Generálás</button>
@@ -119,6 +138,11 @@
       <div id="label"></div>
       <div style="height: 16px;"></div>
       <div id="extra-message"></div>
+    </div>
+
+    <div id="result-image">
+      <img id="jpg-preview" src="" alt="Generált QR kép">
+      <div id="save-hint">📱 Hosszan nyomva menthető telefonon</div>
     </div>
 
     <footer>Designed by David..</footer>
@@ -134,12 +158,16 @@
       const labelContainer = document.getElementById("label");
       const extraContainer = document.getElementById("extra-message");
       const downloadBtn = document.getElementById("download-btn");
+      const resultImage = document.getElementById("result-image");
+      const jpgPreview = document.getElementById("jpg-preview");
 
       qrDiv.innerHTML = "";
       labelContainer.textContent = "";
       extraContainer.textContent = "";
       qrContainer.style.display = "none";
       downloadBtn.style.display = "none";
+      resultImage.style.display = "none";
+      jpgPreview.src = "";
 
       if (text) {
         const canvas = document.createElement("canvas");
@@ -151,6 +179,14 @@
             labelContainer.textContent = caption;
             qrContainer.style.display = "block";
             downloadBtn.style.display = "inline-block";
+
+            // JPG kép generálás és megjelenítés
+            setTimeout(() => {
+              html2canvas(qrContainer, { scale: 2 }).then(cnv => {
+                jpgPreview.src = cnv.toDataURL("image/jpeg", 1.0);
+                resultImage.style.display = "block";
+              });
+            }, 200);
           }
         });
       }
