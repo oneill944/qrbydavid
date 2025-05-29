@@ -1,159 +1,176 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR kód generátor</title>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QR kód generátor</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
 
-        .container {
-            background: #fff;
-            padding: 20px 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 30px auto;
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-        }
+    .container {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin: 30px auto;
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+    }
 
-        h1 {
-            text-align: center;
-            font-size: 22px;
-            margin-bottom: 20px;
-        }
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
 
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
 
-        button {
-            width: 48%;
-            padding: 12px;
-            margin: 5px 1%;
-            font-size: 16px;
-            background: #0066cc;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
+    button {
+      width: 48%;
+      padding: 12px;
+      margin: 5px 1%;
+      font-size: 16px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
 
-        button:hover {
-            background: #004c99;
-        }
+    button:hover {
+      background: #004c99;
+    }
 
-        #qr-container {
-            display: none;
-            margin-top: 20px;
-            padding: 10px;
-            text-align: center;
-            background: #fff;
-        }
+    #qr-container {
+      display: none;
+      margin-top: 20px;
+      padding: 10px;
+      text-align: center;
+      background: #fff;
+    }
 
-        #label {
-            margin-top: 10px;
-            font-size: 32px;
-            font-weight: bold;
-            color: #333;
-        }
+    #extra-message {
+      font-size: 16px;
+      font-weight: bold;
+      color: #555;
+      margin-top: 10px;
+      text-align: center;
+    }
 
-        #download-btn {
-            display: none;
-        }
+    #label {
+      margin-top: 10px;
+      font-size: 32px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+    }
 
-        footer {
-            text-align: center;
-            font-size: 13px;
-            color: #888;
-            margin-top: 30px;
-        }
+    #download-btn {
+      display: none;
+    }
 
-        canvas {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
+    footer {
+      text-align: center;
+      font-size: 13px;
+      color: #888;
+      margin-top: 30px;
+    }
+
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>QR kód generátor</h1>
-        <input type="text" id="text" placeholder="QR kód tartalma">
-        <input type="text" id="caption" placeholder="QR kód alatti szöveg">
-        <div style="text-align: center;">
-            <button onclick="generateQR()">Generálás</button>
-            <button id="download-btn" onclick="downloadImage()">Letöltés</button>
-        </div>
-
-        <div id="qr-container">
-            <div id="qr"></div>
-            <div id="label"></div>
-        </div>
-
-        <footer>Designed by David..</footer>
+  <div class="container">
+    <h1>QR kód generátor</h1>
+    <input type="text" id="text" placeholder="QR kód tartalma">
+    <input type="text" id="caption" placeholder="QR kód alatti szöveg">
+    <input type="text" id="extra" placeholder="Egyéb üzenet (pl.: Köszönjük a vásárlást ❤️)">
+    
+    <div style="text-align: center;">
+      <button onclick="generateQR()">Generálás</button>
+      <button id="download-btn" onclick="downloadImage()">Letöltés</button>
     </div>
 
-    <script>
-        function generateQR() {
-            const text = document.getElementById("text").value.trim();
-            const caption = document.getElementById("caption").value.trim();
-            const qrContainer = document.getElementById("qr-container");
-            const qrDiv = document.getElementById("qr");
-            const labelContainer = document.getElementById("label");
-            const downloadBtn = document.getElementById("download-btn");
+    <div id="qr-container">
+      <div id="qr"></div>
+      <div id="label"></div>
+      <div style="height: 16px;"></div>
+      <div id="extra-message"></div>
+    </div>
 
-            qrDiv.innerHTML = "";
-            labelContainer.textContent = "";
-            qrContainer.style.display = "none";
-            downloadBtn.style.display = "none";
+    <footer>Designed by David..</footer>
+  </div>
 
-            if (text) {
-                const canvas = document.createElement("canvas");
-                QRCode.toCanvas(canvas, text, { width: 180, margin: 2 }, function (error) {
-                    if (error) console.error(error);
-                    else {
-                        qrDiv.appendChild(canvas);
-                        labelContainer.textContent = caption;
-                        qrContainer.style.display = "block";
-                        downloadBtn.style.display = "inline-block";
-                    }
-                });
-            }
-        }
+  <script>
+    function generateQR() {
+      const text = document.getElementById("text").value.trim();
+      const caption = document.getElementById("caption").value.trim();
+      const extra = document.getElementById("extra").value.trim();
+      const qrContainer = document.getElementById("qr-container");
+      const qrDiv = document.getElementById("qr");
+      const labelContainer = document.getElementById("label");
+      const extraContainer = document.getElementById("extra-message");
+      const downloadBtn = document.getElementById("download-btn");
 
-        function downloadImage() {
-            const qrContainer = document.querySelector("#qr-container");
-            const caption = document.getElementById("caption").value.trim();
-            if (qrContainer.style.display !== "none") {
-                setTimeout(() => {
-                    html2canvas(qrContainer, { scale: 2 }).then(canvas => {
-                        const link = document.createElement("a");
-                        const fileName = caption ? caption.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".png" : "qr_kod.png";
-                        link.download = fileName;
-                        link.href = canvas.toDataURL("image/png");
-                        link.click();
-                    });
-                }, 200);
-            }
-        }
-    </script>
+      qrDiv.innerHTML = "";
+      labelContainer.textContent = "";
+      extraContainer.textContent = "";
+      qrContainer.style.display = "none";
+      downloadBtn.style.display = "none";
+
+      if (text) {
+        const canvas = document.createElement("canvas");
+        QRCode.toCanvas(canvas, text, { width: 180, margin: 2 }, function (error) {
+          if (error) console.error(error);
+          else {
+            qrDiv.appendChild(canvas);
+            labelContainer.textContent = caption;
+            extraContainer.textContent = extra;
+            qrContainer.style.display = "block";
+            downloadBtn.style.display = "inline-block";
+          }
+        });
+      }
+    }
+
+    function downloadImage() {
+      const qrContainer = document.querySelector("#qr-container");
+      const caption = document.getElementById("caption").value.trim();
+      if (qrContainer.style.display !== "none") {
+        setTimeout(() => {
+          html2canvas(qrContainer, { scale: 2 }).then(canvas => {
+            const link = document.createElement("a");
+            const fileName = caption ? caption.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".png" : "qr_kod.png";
+            link.download = fileName;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+          });
+        }, 200);
+      }
+    }
+  </script>
 </body>
 </html>
