@@ -85,10 +85,6 @@
       text-align: center;
     }
 
-    #download-btn {
-      display: none;
-    }
-
     footer {
       text-align: center;
       font-size: 13px;
@@ -118,6 +114,10 @@
       font-size: 14px;
       color: #555;
       margin-top: 5px;
+    }
+
+    #download-btn {
+      display: none;
     }
   </style>
 </head>
@@ -161,6 +161,7 @@
       const resultImage = document.getElementById("result-image");
       const jpgPreview = document.getElementById("jpg-preview");
 
+      // Törlés
       qrDiv.innerHTML = "";
       labelContainer.textContent = "";
       extraContainer.textContent = "";
@@ -172,22 +173,25 @@
       if (text) {
         const canvas = document.createElement("canvas");
         QRCode.toCanvas(canvas, text, { width: 180, margin: 2 }, function (error) {
-          if (error) console.error(error);
-          else {
-            if (extra) extraContainer.textContent = extra;
-            qrDiv.appendChild(canvas);
-            labelContainer.textContent = caption;
-            qrContainer.style.display = "block";
-            downloadBtn.style.display = "inline-block";
-
-            // JPG kép generálás és megjelenítés
-            setTimeout(() => {
-              html2canvas(qrContainer, { scale: 2 }).then(cnv => {
-                jpgPreview.src = cnv.toDataURL("image/jpeg", 1.0);
-                resultImage.style.display = "block";
-              });
-            }, 200);
+          if (error) {
+            console.error(error);
+            return;
           }
+
+          qrDiv.appendChild(canvas);
+          labelContainer.textContent = caption;
+          extraContainer.textContent = extra;
+          qrContainer.style.display = "block";
+
+          // Kép generálása
+          setTimeout(() => {
+            html2canvas(qrContainer, { scale: 2 }).then(cnv => {
+              jpgPreview.src = cnv.toDataURL("image/jpeg", 1.0);
+              resultImage.style.display = "block";
+              qrContainer.style.display = "none"; // Az eredeti QR-div elrejtése
+              downloadBtn.style.display = "inline-block";
+            });
+          }, 200);
         });
       }
     }
@@ -195,17 +199,14 @@
     function downloadImage() {
       const qrContainer = document.querySelector("#qr-container");
       const caption = document.getElementById("caption").value.trim();
-      if (qrContainer.style.display !== "none") {
-        setTimeout(() => {
-          html2canvas(qrContainer, { scale: 2 }).then(canvas => {
-            const link = document.createElement("a");
-            const fileName = caption ? caption.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".png" : "qr_kod.png";
-            link.download = fileName;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-          });
-        }, 200);
-      }
+      if (qrContainer.style.display !== "none") return;
+
+      const image = document.getElementById("jpg-preview").src;
+      const link = document.createElement("a");
+      const fileName = caption ? caption.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".png" : "qr_kod.png";
+      link.download = fileName;
+      link.href = image;
+      link.click();
     }
   </script>
 </body>
