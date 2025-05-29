@@ -46,9 +46,9 @@
     }
 
     button {
-      width: 30%;
+      width: 48%;
       padding: 12px;
-      margin: 5px 1.5%;
+      margin: 5px 1%;
       font-size: 16px;
       background: #0066cc;
       color: white;
@@ -74,6 +74,7 @@
       font-weight: bold;
       color: #555;
       margin-bottom: 10px;
+      text-align: center;
     }
 
     #label {
@@ -81,9 +82,10 @@
       font-size: 32px;
       font-weight: bold;
       color: #333;
+      text-align: center;
     }
 
-    #download-btn, #print-btn {
+    #download-btn {
       display: none;
     }
 
@@ -98,23 +100,6 @@
       max-width: 100%;
       height: auto;
     }
-
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-
-      #qr-container, #qr-container * {
-        visibility: visible;
-      }
-
-      #qr-container {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-      }
-    }
   </style>
 </head>
 <body>
@@ -123,18 +108,17 @@
     <input type="text" id="text" placeholder="QR kód tartalma">
     <input type="text" id="caption" placeholder="QR kód alatti szöveg">
     <input type="text" id="extra" placeholder="Egyéb üzenet (pl.: Köszönjük a vásárlást ❤️)">
-
+    
     <div style="text-align: center;">
       <button onclick="generateQR()">Generálás</button>
       <button id="download-btn" onclick="downloadImage()">Letöltés</button>
-      <button id="print-btn" onclick="printQR()">Nyomtatás</button>
     </div>
 
     <div id="qr-container">
       <div id="qr"></div>
-      <div id="label" style="text-align: center;"></div>
+      <div id="label"></div>
       <div style="height: 16px;"></div>
-      <div id="extra-message" style="text-align: center;"></div>
+      <div id="extra-message"></div>
     </div>
 
     <footer>Designed by David..</footer>
@@ -150,14 +134,12 @@
       const labelContainer = document.getElementById("label");
       const extraContainer = document.getElementById("extra-message");
       const downloadBtn = document.getElementById("download-btn");
-      const printBtn = document.getElementById("print-btn");
 
       qrDiv.innerHTML = "";
       labelContainer.textContent = "";
       extraContainer.textContent = "";
       qrContainer.style.display = "none";
       downloadBtn.style.display = "none";
-      printBtn.style.display = "none";
 
       if (text) {
         const canvas = document.createElement("canvas");
@@ -169,7 +151,6 @@
             labelContainer.textContent = caption;
             qrContainer.style.display = "block";
             downloadBtn.style.display = "inline-block";
-            printBtn.style.display = "inline-block";
           }
         });
       }
@@ -188,13 +169,6 @@
             link.click();
           });
         }, 200);
-      }
-    }
-
-    function printQR() {
-      const qrContainer = document.querySelector("#qr-container");
-      if (qrContainer.style.display !== "none") {
-        window.print();
       }
     }
   </script>
