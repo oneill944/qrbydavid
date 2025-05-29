@@ -17,6 +17,7 @@
       align-items: flex-start;
       min-height: 100vh;
     }
+
     .container {
       background: #fff;
       padding: 20px 30px;
@@ -27,11 +28,13 @@
       max-width: 400px;
       box-sizing: border-box;
     }
+
     h1 {
       text-align: center;
       font-size: 22px;
       margin-bottom: 20px;
     }
+
     input[type="text"] {
       width: 100%;
       padding: 12px;
@@ -41,10 +44,11 @@
       font-size: 16px;
       box-sizing: border-box;
     }
+
     button {
       width: 30%;
       padding: 12px;
-      margin: 5px 1%;
+      margin: 5px 1.5%;
       font-size: 16px;
       background: #0066cc;
       color: white;
@@ -52,9 +56,11 @@
       border-radius: 8px;
       cursor: pointer;
     }
+
     button:hover {
       background: #004c99;
     }
+
     #qr-container {
       display: none;
       margin-top: 20px;
@@ -62,32 +68,52 @@
       text-align: center;
       background: #fff;
     }
+
     #extra-message {
       font-size: 16px;
       font-weight: bold;
       color: #555;
       margin-bottom: 10px;
-      text-align: center;
     }
+
     #label {
       margin-top: 10px;
       font-size: 32px;
       font-weight: bold;
       color: #333;
-      text-align: center;
     }
+
     #download-btn, #print-btn {
       display: none;
     }
+
     footer {
       text-align: center;
       font-size: 13px;
       color: #888;
       margin-top: 30px;
     }
+
     canvas {
       max-width: 100%;
       height: auto;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+
+      #qr-container, #qr-container * {
+        visibility: visible;
+      }
+
+      #qr-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -96,18 +122,21 @@
     <h1>QR kód generátor</h1>
     <input type="text" id="text" placeholder="QR kód tartalma">
     <input type="text" id="caption" placeholder="QR kód alatti szöveg">
-    <input type="text" id="extra" placeholder="Egyéb üzenet (pl.: Köszi a vásárlást ❤️)">
+    <input type="text" id="extra" placeholder="Egyéb üzenet (pl.: Köszönjük a vásárlást ❤️)">
+
     <div style="text-align: center;">
       <button onclick="generateQR()">Generálás</button>
       <button id="download-btn" onclick="downloadImage()">Letöltés</button>
       <button id="print-btn" onclick="printQR()">Nyomtatás</button>
     </div>
+
     <div id="qr-container">
-      <div id="extra-message"></div>
       <div id="qr"></div>
+      <div id="label" style="text-align: center;"></div>
       <div style="height: 16px;"></div>
-      <div id="label"></div>
+      <div id="extra-message" style="text-align: center;"></div>
     </div>
+
     <footer>Designed by David..</footer>
   </div>
 
@@ -133,7 +162,8 @@
       if (text) {
         const canvas = document.createElement("canvas");
         QRCode.toCanvas(canvas, text, { width: 180, margin: 2 }, function (error) {
-          if (!error) {
+          if (error) console.error(error);
+          else {
             if (extra) extraContainer.textContent = extra;
             qrDiv.appendChild(canvas);
             labelContainer.textContent = caption;
@@ -163,26 +193,9 @@
 
     function printQR() {
       const qrContainer = document.querySelector("#qr-container");
-      const printWindow = window.open('', '', 'width=600,height=600');
-      const style = `
-        <style>
-          body { text-align: center; font-family: Arial; }
-          img, canvas { max-width: 100%; margin-top: 10px; }
-          div { margin-top: 10px; }
-          h2 { font-size: 22px; margin-bottom: 8px; }
-          h1 { font-size: 32px; margin-top: 10px; }
-        </style>
-      `;
-      setTimeout(() => {
-        html2canvas(qrContainer, { scale: 2 }).then(canvas => {
-          const imgData = canvas.toDataURL();
-          printWindow.document.write(`<html><head><title>QR Kód Nyomtatás</title>${style}</head><body><img src="${imgData}"/></body></html>`);
-          printWindow.document.close();
-          printWindow.focus();
-          printWindow.print();
-          printWindow.close();
-        });
-      }, 200);
+      if (qrContainer.style.display !== "none") {
+        window.print();
+      }
     }
   </script>
 </body>
