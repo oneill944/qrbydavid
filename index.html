@@ -43,6 +43,7 @@
       border-radius: 8px;
       font-size: 16px;
       box-sizing: border-box;
+      text-align: center;
     }
 
     button {
@@ -119,13 +120,35 @@
     #download-btn {
       display: none;
     }
+
+    /* Kerethez */
+    .frame-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .frame-wrapper img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .frame-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 22px;
+      font-weight: bold;
+      color: black;
+      text-align: center;
+      width: 80%;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>QR kód generátor</h1>
     <input type="text" id="text" placeholder="QR kód tartalma">
-    <input type="text" id="caption" placeholder="QR kód alatti szöveg">
     <input type="text" id="extra" placeholder="Egyéb üzenet (pl.: Köszi a vásárlást ❤️)">
 
     <select id="provider">
@@ -161,7 +184,6 @@
 
     function generateQR() {
       const text = document.getElementById("text").value.trim();
-      const captionInput = document.getElementById("caption").value.trim();
       const extra = document.getElementById("extra").value.trim();
       const provider = document.getElementById("provider").value.trim();
       const qrContainer = document.getElementById("qr-container");
@@ -182,29 +204,20 @@
       cachedCanvas = null;
 
       if (text) {
-        let qrSize = 180;
-        switch(provider) {
-          case "GLS": qrSize = 200; break;
-          case "Foxpost": qrSize = 200; break;
-          case "Samday": qrSize = 240; break;
-          case "Packeta": qrSize = 130; break;
-        }
+        // GLS vagy Packeta → keretes megoldás
+        if (provider === "GLS" || provider === "Packeta") {
+          const frameWrapper = document.createElement("div");
+          frameWrapper.className = "frame-wrapper";
+          const img = document.createElement("img");
+          img.src = "cat-frame-black-white.png"; // ezt töltsd fel a repo gyökerébe
+          const span = document.createElement("div");
+          span.className = "frame-text";
+          span.innerText = text + " " + provider;
+          frameWrapper.appendChild(img);
+          frameWrapper.appendChild(span);
+          qrDiv.appendChild(frameWrapper);
 
-        const canvas = document.createElement("canvas");
-        QRCode.toCanvas(canvas, text, { width: qrSize, margin: 2 }, function (error) {
-          if (error) {
-            console.error(error);
-            return;
-          }
-
-          qrDiv.appendChild(canvas);
-
-          let labelText = captionInput;
-          if (provider) {
-            labelText += ` ${provider}`;
-          }
-
-          labelContainer.textContent = labelText;
+          labelContainer.textContent = "";
           extraContainer.textContent = extra;
           qrContainer.style.display = "block";
 
@@ -217,17 +230,56 @@
               downloadBtn.style.display = "inline-block";
             });
           }, 200);
-        });
+
+        } else {
+          // QR kód (eredeti működés)
+          let qrSize = 180;
+          switch(provider) {
+            case "GLS": qrSize = 200; break;
+            case "Foxpost": qrSize = 200; break;
+            case "Sameday": qrSize = 240; break;
+            case "Packeta": qrSize = 130; break;
+          }
+
+          const canvas = document.createElement("canvas");
+          QRCode.toCanvas(canvas, text, { width: qrSize, margin: 2 }, function (error) {
+            if (error) {
+              console.error(error);
+              return;
+            }
+
+            qrDiv.appendChild(canvas);
+
+            let labelText = text;
+            if (provider) {
+              labelText += ` ${provider}`;
+            }
+
+            labelContainer.textContent = labelText;
+            extraContainer.textContent = extra;
+            qrContainer.style.display = "block";
+
+            setTimeout(() => {
+              html2canvas(qrContainer, { scale: 2 }).then(cnv => {
+                cachedCanvas = cnv;
+                jpgPreview.src = cnv.toDataURL("image/jpeg", 1.0);
+                resultImage.style.display = "block";
+                qrContainer.style.display = "none";
+                downloadBtn.style.display = "inline-block";
+              });
+            }, 200);
+          });
+        }
       }
     }
 
     function downloadImage() {
-      const caption = document.getElementById("caption").value.trim();
+      const text = document.getElementById("text").value.trim();
       if (!cachedCanvas) return;
 
       const image = cachedCanvas.toDataURL("image/png");
       const link = document.createElement("a");
-      const fileName = caption ? caption.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".png" : "qr_kod.png";
+      const fileName = text ? text.replace(/[^a-z0-9]/gi, '_').toLowerCase() + ".png" : "qr_kod.png";
       link.download = fileName;
       link.href = image;
       link.click();
