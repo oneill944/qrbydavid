@@ -125,6 +125,7 @@
     .frame-wrapper {
       position: relative;
       display: inline-block;
+      text-align: center;
     }
 
     .frame-wrapper img {
@@ -132,14 +133,29 @@
       display: block;
     }
 
+    /* Fő szöveg (feljebb igazítva) */
     .frame-text {
       position: absolute;
-      top: 50%;
+      top: 40%; /* 50% helyett kicsit feljebb */
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 22px;
       font-weight: bold;
       color: black;
+      text-align: center;
+      width: 80%;
+      line-height: 1.2;
+    }
+
+    /* Extra üzenet is a keret belsejébe */
+    .frame-extra {
+      position: absolute;
+      top: 70%; /* lejjebb kerül */
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 16px;
+      font-weight: normal;
+      color: #444;
       text-align: center;
       width: 80%;
     }
@@ -208,17 +224,23 @@
         if (provider === "GLS" || provider === "Packeta") {
           const frameWrapper = document.createElement("div");
           frameWrapper.className = "frame-wrapper";
+
           const img = document.createElement("img");
-          img.src = "cat-frame-black-white.png"; // ezt töltsd fel a repo gyökerébe
+          img.src = "macska_keret.png"; // <-- ezt a képet tedd a repó gyökerébe
+
           const span = document.createElement("div");
           span.className = "frame-text";
           span.innerText = text + " " + provider;
+
+          const extraSpan = document.createElement("div");
+          extraSpan.className = "frame-extra";
+          extraSpan.innerText = extra;
+
           frameWrapper.appendChild(img);
           frameWrapper.appendChild(span);
+          frameWrapper.appendChild(extraSpan);
           qrDiv.appendChild(frameWrapper);
 
-          labelContainer.textContent = "";
-          extraContainer.textContent = extra;
           qrContainer.style.display = "block";
 
           setTimeout(() => {
