@@ -84,6 +84,7 @@
       font-weight: bold;
       color: #333;
       text-align: center;
+      white-space: pre-line;
     }
 
     footer {
@@ -145,6 +146,7 @@
       text-align: center;
       width: 80%;
       line-height: 1.2;
+      white-space: pre-line;
     }
 
     /* Extra üzenet is a keret belsejébe */
@@ -230,7 +232,7 @@
 
           const span = document.createElement("div");
           span.className = "frame-text";
-          span.innerText = text + " " + provider;
+          span.innerText = text + " \n" + provider;
 
           const extraSpan = document.createElement("div");
           extraSpan.className = "frame-extra";
@@ -274,7 +276,7 @@
 
             let labelText = text;
             if (provider) {
-              labelText += ` ${provider}`;
+              labelText += ` \n${provider}`;
             }
 
             labelContainer.textContent = labelText;
